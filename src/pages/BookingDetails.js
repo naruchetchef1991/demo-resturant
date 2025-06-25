@@ -42,7 +42,7 @@ const BookingDetails = () => {
   };
 
   return (
-    <div className="space-y-6 fade-in">
+    <div className="flex-1 p-4 space-y-6 fade-in max-w-2xl mx-auto">
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">ข้อมูลการจอง</h2>
         <p className="text-gray-600">กรอกข้อมูลสำหรับการจองโต๊ะ</p>
