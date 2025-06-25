@@ -7,6 +7,8 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  // Disable automatic Origin header
+  withCredentials: false,
 });
 
 // Request interceptor
@@ -17,6 +19,15 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Remove Origin header if present
+    if (config.headers.Origin) {
+      delete config.headers.Origin;
+    }
+    if (config.headers.origin) {
+      delete config.headers.origin;
+    }
+    
     return config;
   },
   (error) => {

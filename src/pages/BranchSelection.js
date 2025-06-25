@@ -109,12 +109,15 @@ const BranchSelection = () => {
                   </div>
 
                   {/* Select Button */}
-                  <Button
-                    onClick={() => setBranch(branch)}
+                  <button
+                    onClick={() => {
+                      console.log('Branch button clicked:', branch);
+                      setBranch(branch);
+                    }}
                     className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
                   >
                     เลือกสาขานี้
-                  </Button>
+                  </button>
                 </div>
               </div>
             ))}
