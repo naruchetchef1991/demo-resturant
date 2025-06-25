@@ -208,6 +208,10 @@ export const BookingProvider = ({ children }) => {
     dispatch({ type: 'UPDATE_CUSTOMER_INFO', payload: info });
   };
 
+  const setCustomerDetails = (details) => {
+    dispatch({ type: 'UPDATE_CUSTOMER_INFO', payload: details });
+  };
+
   const createBooking = async () => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
@@ -256,6 +260,7 @@ export const BookingProvider = ({ children }) => {
 
   const value = {
     ...state,
+    customerDetails: state.customerInfo, // Alias for compatibility
     selectBranch,
     selectDate,
     selectTime,
@@ -264,6 +269,7 @@ export const BookingProvider = ({ children }) => {
     loadAvailableTables,
     selectTable,
     updateCustomerInfo,
+    setCustomerDetails,
     createBooking,
     resetBooking,
     clearError
