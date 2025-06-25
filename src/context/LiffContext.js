@@ -31,7 +31,7 @@ export const LiffProvider = ({ children }) => {
       }
 
       // Initialize LIFF
-      const liffId = process.env.REACT_APP_LIFF_ID;
+      const liffId = "2007640658-4a91m9P8";
       if (!liffId) {
         throw new Error('LIFF ID is not configured');
       }
