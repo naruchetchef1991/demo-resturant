@@ -167,7 +167,17 @@ export const BookingProvider = ({ children }) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
       
-      const dateTimeString = `${state.selectedDate}T${state.selectedTime}:00`;
+      // Format date properly for API
+      let dateString;
+      if (state.selectedDate instanceof Date) {
+        dateString = state.selectedDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+      } else {
+        dateString = state.selectedDate;
+      }
+      
+      const dateTimeString = `${dateString}T${state.selectedTime}:00`;
+      console.log('API call dateTimeString:', dateTimeString);
+      
       const response = await tableAPI.checkTableAvailability({
         branchId: state.selectedBranch.id,
         dateTime: dateTimeString,
@@ -196,10 +206,18 @@ export const BookingProvider = ({ children }) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
 
+      // Format date properly for API
+      let dateString;
+      if (state.selectedDate instanceof Date) {
+        dateString = state.selectedDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+      } else {
+        dateString = state.selectedDate;
+      }
+
       const bookingData = {
         branchId: state.selectedBranch.id,
         tableId: state.selectedTable?.id,
-        dateTime: `${state.selectedDate}T${state.selectedTime}:00`,
+        dateTime: `${dateString}T${state.selectedTime}:00`,
         guestCount: state.guestCount,
         customerName: state.customerInfo.name,
         customerPhone: state.customerInfo.phone,

@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { format } from 'date-fns';
+import { th } from 'date-fns/locale';
 import { useBooking } from '../context/BookingContext';
 import LoadingScreen from '../components/UI/LoadingScreen';
 import TableMap from '../components/UI/TableMap';
@@ -19,6 +21,10 @@ const TableSelection = () => {
     isLoading,
     error
   } = useBooking();
+
+  console.log('TableSelection - selectedDate:', selectedDate, 'type:', typeof selectedDate);
+  console.log('TableSelection - selectedTime:', selectedTime);
+  console.log('TableSelection - selectedBranch:', selectedBranch);
 
   useEffect(() => {
     if (selectedBranch && selectedDate && selectedTime) {
@@ -66,7 +72,7 @@ const TableSelection = () => {
       <div className="mb-6">
         <h2 className="text-xl font-semibold mb-2">เลือกโต๊ะ</h2>
         <p className="text-gray-600">
-          {selectedBranch.name} • {selectedDate} • {selectedTime} • {guestCount} ท่าน
+          {selectedBranch.name} • {format(selectedDate, 'd MMM yyyy', { locale: th })} • {selectedTime} • {guestCount} ท่าน
         </p>
       </div>
 
