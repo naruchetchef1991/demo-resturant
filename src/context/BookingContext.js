@@ -176,7 +176,11 @@ export const BookingProvider = ({ children }) => {
       }
       
       const dateTimeString = `${dateString}T${state.selectedTime}:00`;
-      console.log('API call dateTimeString:', dateTimeString);
+      console.log('API call data:', {
+        branchId: state.selectedBranch.id,
+        dateTime: dateTimeString,
+        guestCount: state.guestCount
+      });
       
       const response = await tableAPI.checkTableAvailability({
         branchId: state.selectedBranch.id,
@@ -184,7 +188,9 @@ export const BookingProvider = ({ children }) => {
         guestCount: state.guestCount
       });
       
+      console.log('API response:', response);
       const tables = response.data || response; // Handle both wrapped and direct response
+      console.log('Processed tables:', tables);
       dispatch({ type: 'SET_AVAILABLE_TABLES', payload: tables });
     } catch (error) {
       console.error('Failed to load available tables:', error);
