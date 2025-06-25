@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { useLiffContext } from './LiffContext';
-import apiService from '../services/api';
+import { branchAPI, tableAPI, bookingAPI } from '../services/api';
 
 const BookingContext = createContext();
 
@@ -110,7 +110,16 @@ export const BookingProvider = ({ children }) => {
     const loadBranches = async () => {
       try {
         dispatch({ type: 'SET_LOADING', payload: true });
-        const branches = await apiService.getBranches();
+        const response = await branchAPI.getBranches();
+        console.log('Branches API response:', response);
+        
+        const branches = response.data || response; // Handle both wrapped and direct response
+        console.log('Processed branches:', branches);
+        
+        if (!Array.isArray(branches)) {
+          throw new Error('Branches data is not an array');
+        }
+        
         dispatch({ type: 'SET_BRANCHES', payload: branches });
       } catch (error) {
         console.error('Failed to load branches:', error);
@@ -148,12 +157,13 @@ export const BookingProvider = ({ children }) => {
       dispatch({ type: 'SET_LOADING', payload: true });
       
       const dateTimeString = `${state.selectedDate}T${state.selectedTime}:00`;
-      const tables = await apiService.getAvailableTables(
-        state.selectedBranch.id,
-        dateTimeString,
-        state.guestCount
-      );
+      const response = await tableAPI.checkTableAvailability({
+        branchId: state.selectedBranch.id,
+        dateTime: dateTimeString,
+        guestCount: state.guestCount
+      });
       
+      const tables = response.data || response; // Handle both wrapped and direct response
       dispatch({ type: 'SET_AVAILABLE_TABLES', payload: tables });
     } catch (error) {
       console.error('Failed to load available tables:', error);
@@ -187,7 +197,8 @@ export const BookingProvider = ({ children }) => {
         notes: state.customerInfo.notes
       };
 
-      const booking = await apiService.createBooking(bookingData);
+      const response = await bookingAPI.createBooking(bookingData);
+      const booking = response.data || response; // Handle both wrapped and direct response
       dispatch({ type: 'SET_BOOKING_REFERENCE', payload: booking.reference });
       
       return booking;
