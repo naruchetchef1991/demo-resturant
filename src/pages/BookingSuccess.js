@@ -24,15 +24,12 @@ const BookingSuccess = () => {
     guestCount,
     selectedTable, 
     customerDetails,
+    bookingReference,
     resetBooking
   } = useBooking();
   
-  // Removed LIFF functionality for now
-
-  // Generate booking reference number
-  const bookingRef = `PH${Date.now().toString().slice(-6)}`;
-
-  // Removed LINE messaging functionality for now
+  // Use booking reference from API or generate fallback
+  const bookingRef = bookingReference || `PH${Date.now().toString().slice(-6)}`;
 
   const handleNewBooking = () => {
     resetBooking();
@@ -43,8 +40,46 @@ const BookingSuccess = () => {
     navigate('/history');
   };
 
+  const formatDate = (date) => {
+    try {
+      if (!date) return 'ไม่ระบุวันที่';
+      
+      // Convert string to Date if needed
+      const dateObj = typeof date === 'string' ? new Date(date) : date;
+      
+      // Check if date is valid
+      if (isNaN(dateObj.getTime())) {
+        return 'วันที่ไม่ถูกต้อง';
+      }
+      
+      return format(dateObj, 'd MMMM yyyy', { locale: th });
+    } catch (error) {
+      console.error('Date formatting error:', error);
+      return 'วันที่ไม่ถูกต้อง';
+    }
+  };
+
+  const formatDateLong = (date) => {
+    try {
+      if (!date) return 'ไม่ระบุวันที่';
+      
+      // Convert string to Date if needed
+      const dateObj = typeof date === 'string' ? new Date(date) : date;
+      
+      // Check if date is valid
+      if (isNaN(dateObj.getTime())) {
+        return 'วันที่ไม่ถูกต้อง';
+      }
+      
+      return format(dateObj, 'EEEE ที่ d MMMM yyyy', { locale: th });
+    } catch (error) {
+      console.error('Date formatting error:', error);
+      return 'วันที่ไม่ถูกต้อง';
+    }
+  };
+
   const handleShareBooking = async () => {
-    const shareText = `จองโต๊ะร้าน ${selectedBranch?.name} สำเร็จแล้ว!\nวันที่: ${format(selectedDate, 'd MMMM yyyy', { locale: th })}\nเวลา: ${selectedTime} น.\nจำนวน: ${guestCount} คน${selectedTable ? `\nโต๊ะ: ${selectedTable}` : ''}\nรหัสการจอง: ${bookingRef}`;
+    const shareText = `จองโต๊ะร้าน ${selectedBranch?.name} สำเร็จแล้ว!\nวันที่: ${formatDate(selectedDate)}\nเวลา: ${selectedTime} น.\nจำนวน: ${guestCount} คน${getTableDisplay() ? `\nโต๊ะ: ${getTableDisplay()}` : ''}\nรหัสการจอง: ${bookingRef}`;
     
     if (navigator.share) {
       try {
@@ -66,8 +101,23 @@ const BookingSuccess = () => {
     }
   };
 
+  // Helper function to get table display name
+  const getTableDisplay = () => {
+    if (!selectedTable) return '';
+    
+    if (typeof selectedTable === 'string') {
+      return selectedTable;
+    }
+    
+    if (typeof selectedTable === 'object') {
+      return selectedTable.table_number || selectedTable.name || `โต๊ะ ${selectedTable.id}`;
+    }
+    
+    return 'โต๊ะที่เลือก';
+  };
+
   return (
-    <div className="space-y-6 fade-in">
+    <div className="flex-1 p-4 space-y-6 fade-in max-w-2xl mx-auto">
       {/* Success Header */}
       <div className="text-center">
         <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
@@ -107,9 +157,9 @@ const BookingSuccess = () => {
             <ClockIcon className="w-5 h-5 text-gray-400 flex-shrink-0" />
             <div>
               <div className="font-medium text-gray-900">
-                {format(selectedDate, 'EEEE ที่ d MMMM yyyy', { locale: th })}
+                {formatDateLong(selectedDate)}
               </div>
-              <div className="text-sm text-gray-600">เวลา {selectedTime} น.</div>
+              <div className="text-sm text-gray-600">เวลา {selectedTime || 'ไม่ระบุเวลา'} น.</div>
             </div>
           </div>
 
@@ -117,9 +167,9 @@ const BookingSuccess = () => {
           <div className="flex items-center space-x-3">
             <UsersIcon className="w-5 h-5 text-gray-400 flex-shrink-0" />
             <div>
-              <div className="font-medium text-gray-900">{guestCount} คน</div>
-              {selectedTable && (
-                <div className="text-sm text-gray-600">โต๊ะ {selectedTable}</div>
+              <div className="font-medium text-gray-900">{guestCount || 1} คน</div>
+              {getTableDisplay() && (
+                <div className="text-sm text-gray-600">{getTableDisplay()}</div>
               )}
             </div>
           </div>
@@ -128,8 +178,8 @@ const BookingSuccess = () => {
           <div className="flex items-center space-x-3">
             <PhoneIcon className="w-5 h-5 text-gray-400 flex-shrink-0" />
             <div>
-              <div className="font-medium text-gray-900">{customerDetails.name}</div>
-              <div className="text-sm text-gray-600">{customerDetails.phone}</div>
+              <div className="font-medium text-gray-900">{customerDetails?.name || 'ไม่ระบุชื่อ'}</div>
+              <div className="text-sm text-gray-600">{customerDetails?.phone || 'ไม่ระบุเบอร์โทร'}</div>
             </div>
           </div>
         </div>
