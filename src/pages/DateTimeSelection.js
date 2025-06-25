@@ -11,6 +11,15 @@ const DateTimeSelection = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
 
+  console.log('DateTimeSelection - selectedBranch:', selectedBranch);
+  console.log('DateTimeSelection - timeSlots:', timeSlots);
+
+  // Redirect back to branch selection if no branch selected
+  if (!selectedBranch) {
+    navigate('/branch');
+    return null;
+  }
+
   // Generate next 14 days
   const generateDateOptions = () => {
     const dates = [];
@@ -72,15 +81,15 @@ const DateTimeSelection = () => {
   };
 
   return (
-    <div className="space-y-6 fade-in">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">เลือกวันและเวลา</h2>
+    <div className="flex-1 p-4">
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold mb-2">เลือกวันและเวลา</h2>
         <p className="text-gray-600">สาขา: {selectedBranch?.name}</p>
       </div>
 
       {/* Date Selection */}
-      <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">เลือกวันที่</h3>
+      <div className="mb-6">
+        <h3 className="text-lg font-medium mb-4">เลือกวันที่</h3>
         <div className="grid grid-cols-2 gap-3">
           {dateOptions.map((date, index) => {
             const isToday = isSameDay(date, new Date());
@@ -90,9 +99,9 @@ const DateTimeSelection = () => {
               <button
                 key={index}
                 onClick={() => handleDateSelect(date)}
-                className={`p-4 rounded-lg border-2 transition-all text-left ${
+                className={`p-3 rounded-lg border-2 transition-all text-left ${
                   isSelected
-                    ? 'border-primary-500 bg-primary-50 text-primary-900'
+                    ? 'border-blue-500 bg-blue-50 text-blue-900'
                     : 'border-gray-200 bg-white text-gray-900 hover:border-gray-300'
                 }`}
               >
@@ -101,7 +110,7 @@ const DateTimeSelection = () => {
                 </div>
                 <div className="text-sm text-gray-600">
                   {format(date, 'd MMMM yyyy', { locale: th })}
-                  {isToday && <span className="text-primary-600 ml-1">(วันนี้)</span>}
+                  {isToday && <span className="text-blue-600 ml-1">(วันนี้)</span>}
                 </div>
               </button>
             );
@@ -111,8 +120,8 @@ const DateTimeSelection = () => {
 
       {/* Time Selection */}
       {selectedDate && (
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">เลือกเวลา</h3>
+        <div className="mb-6">
+          <h3 className="text-lg font-medium mb-4">เลือกเวลา</h3>
           <div className="grid grid-cols-3 gap-3">
             {timeSlots.map((time) => {
               const isUnavailable = isTimeUnavailable(time);
@@ -127,7 +136,7 @@ const DateTimeSelection = () => {
                     isUnavailable
                       ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
                       : isSelected
-                      ? 'border-primary-500 bg-primary-50 text-primary-900'
+                      ? 'border-blue-500 bg-blue-50 text-blue-900'
                       : 'border-gray-200 bg-white text-gray-900 hover:border-gray-300'
                   }`}
                 >
@@ -156,23 +165,25 @@ const DateTimeSelection = () => {
       )}
 
       {/* Continue Button */}
-      <div className="pt-4">
+      <div className="mt-8">
         <Button
-          fullWidth
           onClick={handleContinue}
           disabled={!selectedDate || !selectedTime}
+          className="w-full"
         >
           ดำเนินการต่อ
         </Button>
       </div>
 
       {/* Working Hours Info */}
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-        <h4 className="font-medium text-yellow-900 mb-2">เวลาทำการ</h4>
-        <p className="text-yellow-800">
-          {selectedBranch?.workingHours.open} - {selectedBranch?.workingHours.close} น.
-        </p>
-      </div>
+      {selectedBranch && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <h4 className="font-medium text-yellow-900 mb-2">เวลาทำการ</h4>
+          <p className="text-yellow-800">
+            {selectedBranch.open_time} - {selectedBranch.close_time} น.
+          </p>
+        </div>
+      )}
     </div>
   );
 };
