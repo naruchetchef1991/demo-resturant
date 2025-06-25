@@ -44,6 +44,11 @@ export const branchAPI = {
     api.get(`/branches/${id}/availability?date=${date}&time=${time}`),
 };
 
+// add login api
+export const loginAPI = {
+  login: (data) => api.post('/users/login', data),
+};
+
 // Table API
 export const tableAPI = {
   getTables: () => api.get('/tables'),
