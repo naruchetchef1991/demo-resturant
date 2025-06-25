@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useBooking } from '../context/BookingContext';
 import Button from '../components/UI/Button';
 import LoadingScreen from '../components/UI/LoadingScreen';
 
 const BookingConfirmation = () => {
+  const navigate = useNavigate();
   const {
     selectedBranch,
     selectedDate,
@@ -12,7 +14,6 @@ const BookingConfirmation = () => {
     selectedTable,
     customerDetails,
     confirmBooking,
-    setStep,
     isLoading,
     error,
     clearError
@@ -25,9 +26,11 @@ const BookingConfirmation = () => {
       setIsConfirming(true);
       clearError();
       
-      await confirmBooking();
+      const booking = await confirmBooking();
+      console.log('Booking confirmed:', booking);
       
-      // BookingContext will automatically navigate to success step
+      // Navigate to success page
+      navigate('/success');
     } catch (error) {
       console.error('Booking confirmation failed:', error);
       // Error is handled by context
@@ -202,7 +205,7 @@ const BookingConfirmation = () => {
             </Button>
 
             <Button
-              onClick={() => setStep('details')}
+              onClick={() => navigate('/details')}
               disabled={isConfirming}
               className="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3"
             >
@@ -213,7 +216,7 @@ const BookingConfirmation = () => {
           {/* Back to home */}
           <div className="text-center mt-8">
             <button
-              onClick={() => setStep('branch')}
+              onClick={() => navigate('/')}
               disabled={isConfirming}
               className="text-gray-600 hover:text-gray-800 underline disabled:opacity-50"
             >

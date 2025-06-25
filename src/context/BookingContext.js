@@ -212,6 +212,48 @@ export const BookingProvider = ({ children }) => {
     dispatch({ type: 'UPDATE_CUSTOMER_INFO', payload: details });
   };
 
+  const confirmBooking = async () => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true });
+
+      // Format date properly for API
+      let dateString;
+      if (state.selectedDate instanceof Date) {
+        dateString = state.selectedDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+      } else {
+        dateString = state.selectedDate;
+      }
+
+      const bookingData = {
+        branch_id: state.selectedBranch.id,
+        table_id: state.selectedTable?.id,
+        customer_name: state.customerInfo.name,
+        customer_phone: state.customerInfo.phone,
+        customer_email: state.customerInfo.email,
+        booking_date: dateString,
+        booking_time: state.selectedTime,
+        guest_count: state.guestCount,
+        notes: state.customerInfo.notes,
+        requirements: JSON.stringify(state.customerInfo.requirements || {})
+      };
+
+      console.log('Creating booking with data:', bookingData);
+      const response = await bookingAPI.createBooking(bookingData);
+      console.log('Booking response:', response);
+      
+      const booking = response.data || response; // Handle both wrapped and direct response
+      dispatch({ type: 'SET_BOOKING_REFERENCE', payload: booking.reference || booking.id });
+      
+      return booking;
+    } catch (error) {
+      console.error('Failed to create booking:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'ไม่สามารถทำการจองได้ กรุณาลองใหม่อีกครั้ง' });
+      throw error;
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
   const createBooking = async () => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
@@ -225,15 +267,16 @@ export const BookingProvider = ({ children }) => {
       }
 
       const bookingData = {
-        branchId: state.selectedBranch.id,
-        tableId: state.selectedTable?.id,
-        dateTime: `${dateString}T${state.selectedTime}:00`,
-        guestCount: state.guestCount,
-        customerName: state.customerInfo.name,
-        customerPhone: state.customerInfo.phone,
-        customerEmail: state.customerInfo.email,
-        lineUserId: state.customerInfo.lineUserId,
-        notes: state.customerInfo.notes
+        branch_id: state.selectedBranch.id,
+        table_id: state.selectedTable?.id,
+        customer_name: state.customerInfo.name,
+        customer_phone: state.customerInfo.phone,
+        customer_email: state.customerInfo.email,
+        booking_date: dateString,
+        booking_time: state.selectedTime,
+        guest_count: state.guestCount,
+        notes: state.customerInfo.notes,
+        requirements: JSON.stringify(state.customerInfo.requirements || {})
       };
 
       const response = await bookingAPI.createBooking(bookingData);
@@ -270,6 +313,7 @@ export const BookingProvider = ({ children }) => {
     selectTable,
     updateCustomerInfo,
     setCustomerDetails,
+    confirmBooking,
     createBooking,
     resetBooking,
     clearError
