@@ -163,10 +163,7 @@ export const BookingProvider = ({ children }) => {
   };
 
   const setBranch = (branch) => {
-    console.log('Setting branch:', branch);
     dispatch({ type: 'SET_BRANCH', payload: branch });
-    // For debugging
-    console.log('Branch set, step should change to datetime');
   };
 
   const setDateTime = (date, time) => {

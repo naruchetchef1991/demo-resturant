@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useBookingContext } from '../context/BookingContext';
-import { useLiff } from '../hooks/useLiff';
+
 import Button from '../components/UI/Button';
 
 const BookingDetails = () => {
   const navigate = useNavigate();
   const { customerDetails, setDetails } = useBookingContext();
-  const { liffUser } = useLiff();
+
   
   const {
     register,
@@ -20,12 +20,21 @@ const BookingDetails = () => {
     mode: 'onChange'
   });
 
-  // Pre-fill form with LINE user data
+  // Pre-fill form with existing data
   useEffect(() => {
-    if (liffUser) {
-      setValue('name', liffUser.displayName || '');
+    if (customerDetails.name) {
+      setValue('name', customerDetails.name);
     }
-  }, [liffUser, setValue]);
+    if (customerDetails.phone) {
+      setValue('phone', customerDetails.phone);
+    }
+    if (customerDetails.email) {
+      setValue('email', customerDetails.email);
+    }
+    if (customerDetails.notes) {
+      setValue('notes', customerDetails.notes);
+    }
+  }, [customerDetails, setValue]);
 
   const onSubmit = (data) => {
     setDetails(data);

@@ -1,41 +1,55 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { ChevronLeftIcon, UserCircleIcon } from '@heroicons/react/24/outline';
-import { useLiff } from '../../hooks/useLiff';
+import { useBookingContext } from '../../context/BookingContext';
 
 const Header = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { liffUser } = useLiff();
+  const { step, setStep } = useBookingContext();
 
   const getPageTitle = () => {
-    switch (location.pathname) {
-      case '/branch':
+    switch (step) {
+      case 'branch':
         return 'เลือกสาขา';
-      case '/datetime':
+      case 'datetime':
         return 'เลือกวันและเวลา';
-      case '/guests':
+      case 'guests':
         return 'จำนวนที่นั่ง';
-      case '/details':
+      case 'table':
+        return 'เลือกโต๊ะ';
+      case 'details':
         return 'ข้อมูลการจอง';
-      case '/confirmation':
+      case 'confirmation':
         return 'ยืนยันการจอง';
-      case '/success':
+      case 'success':
         return 'จองสำเร็จ';
-      case '/history':
-        return 'ประวัติการจอง';
       default:
         return 'Phicha Booking';
     }
   };
 
   const canGoBack = () => {
-    return !['/branch', '/success'].includes(location.pathname);
+    return !['branch', 'success'].includes(step);
   };
 
   const handleBack = () => {
     if (canGoBack()) {
-      navigate(-1);
+      switch (step) {
+        case 'datetime':
+          setStep('branch');
+          break;
+        case 'guests':
+          setStep('datetime');
+          break;
+        case 'table':
+          setStep('guests');
+          break;
+        case 'details':
+          setStep('table');
+          break;
+        case 'confirmation':
+          setStep('details');
+          break;
+        default:
+          setStep('branch');
+      }
     }
   };
 
@@ -50,7 +64,9 @@ const Header = () => {
                 onClick={handleBack}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors mr-2"
               >
-                <ChevronLeftIcon className="w-6 h-6 text-gray-600" />
+                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
               </button>
             )}
             <h1 className="text-lg font-semibold text-gray-900">
@@ -58,26 +74,11 @@ const Header = () => {
             </h1>
           </div>
 
-          {/* User Info */}
+          {/* Restaurant Logo */}
           <div className="flex items-center space-x-3">
-            {liffUser ? (
-              <div className="flex items-center space-x-2">
-                {liffUser.pictureUrl ? (
-                  <img
-                    src={liffUser.pictureUrl}
-                    alt={liffUser.displayName}
-                    className="w-8 h-8 rounded-full"
-                  />
-                ) : (
-                  <UserCircleIcon className="w-8 h-8 text-gray-400" />
-                )}
-                <span className="text-sm text-gray-700 hidden sm:block">
-                  {liffUser.displayName}
-                </span>
-              </div>
-            ) : (
-              <UserCircleIcon className="w-8 h-8 text-gray-400" />
-            )}
+            <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
+              <span className="text-white text-sm font-bold">P</span>
+            </div>
           </div>
         </div>
       </div>

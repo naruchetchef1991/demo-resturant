@@ -12,7 +12,7 @@ import {
   ClockIcon as HistoryIcon
 } from '@heroicons/react/24/outline';
 import { useBookingContext } from '../context/BookingContext';
-import { useLiff } from '../hooks/useLiff';
+
 import Button from '../components/UI/Button';
 
 const BookingSuccess = () => {
@@ -27,30 +27,12 @@ const BookingSuccess = () => {
     resetBooking
   } = useBookingContext();
   
-  const { sendMessage, isInClient } = useLiff();
+  // Removed LIFF functionality for now
 
   // Generate booking reference number
   const bookingRef = `PH${Date.now().toString().slice(-6)}`;
 
-  useEffect(() => {
-    // Send confirmation message to LINE chat (if in LINE client)
-    const sendConfirmationMessage = async () => {
-      if (isInClient) {
-        const message = {
-          type: 'text',
-          text: `🎉 การจองสำเร็จ!\n\nรหัสการจอง: ${bookingRef}\nสาขา: ${selectedBranch?.name}\nวันที่: ${format(selectedDate, 'd MMM yyyy', { locale: th })}\nเวลา: ${selectedTime} น.\nจำนวน: ${guestCount} คน${selectedTable ? `\nโต๊ะ: ${selectedTable}` : ''}\n\nขอบคุณที่ใช้บริการ Phicha Booking! 🍽️`
-        };
-        
-        try {
-          await sendMessage([message]);
-        } catch (error) {
-          console.error('Failed to send LINE message:', error);
-        }
-      }
-    };
-
-    sendConfirmationMessage();
-  }, [isInClient, sendMessage, bookingRef, selectedBranch, selectedDate, selectedTime, guestCount, selectedTable]);
+  // Removed LINE messaging functionality for now
 
   const handleNewBooking = () => {
     resetBooking();
