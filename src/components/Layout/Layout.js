@@ -1,16 +1,11 @@
 import React from 'react';
 import Header from './Header';
-import ProgressBar from '../UI/ProgressBar';
-import { useBookingContext } from '../../context/BookingContext';
 
 const Layout = ({ children }) => {
-  const { step } = useBookingContext();
-
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
-      <ProgressBar currentStep={step} />
-      <main className="container mx-auto px-4 py-6 pb-20">
+      <main className="flex-1 flex flex-col">
         {children}
       </main>
     </div>

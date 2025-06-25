@@ -1,11 +1,13 @@
 import React from 'react';
-import { useBookingContext } from '../context/BookingContext';
+import { useNavigate } from 'react-router-dom';
+import { useBooking } from '../context/BookingContext';
 import Layout from '../components/Layout/Layout';
 import Button from '../components/UI/Button';
 import LoadingScreen from '../components/UI/LoadingScreen';
 
 const BranchSelection = () => {
-  const { branches, setBranch, isLoading, error } = useBookingContext();
+  const navigate = useNavigate();
+  const { branches, selectBranch, isLoading, error } = useBooking();
 
   if (isLoading) {
     return <LoadingScreen message="กำลังโหลดข้อมูลสาขา..." />;
@@ -27,8 +29,7 @@ const BranchSelection = () => {
   }
 
   return (
-    <Layout>
-      <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gray-50 py-12">
         <div className="max-w-4xl mx-auto px-4">
           {/* Header */}
           <div className="text-center mb-12">
@@ -110,7 +111,10 @@ const BranchSelection = () => {
 
                   {/* Select Button */}
                   <Button
-                    onClick={() => setBranch(branch)}
+                    onClick={() => {
+                      selectBranch(branch);
+                      navigate('/datetime');
+                    }}
                     className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
                   >
                     เลือกสาขานี้
@@ -128,7 +132,6 @@ const BranchSelection = () => {
           )}
         </div>
       </div>
-    </Layout>
   );
 };
 

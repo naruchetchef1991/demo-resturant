@@ -1,23 +1,23 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { branchAPI, bookingAPI } from '../services/api';
+import { useLiffContext } from './LiffContext';
+import apiService from '../services/api';
 
 const BookingContext = createContext();
 
-const initialBookingState = {
-  step: 'branch',
+const initialState = {
   selectedBranch: null,
   selectedDate: null,
   selectedTime: null,
   guestCount: 2,
   selectedTable: null,
-  customerDetails: {
+  customerInfo: {
     name: '',
     phone: '',
     email: '',
+    lineUserId: '',
     notes: ''
   },
-  bookingConfirmed: false,
-  bookingHistory: [],
+  bookingReference: null,
   isLoading: false,
   error: null,
   availableTables: [],
@@ -27,81 +27,61 @@ const initialBookingState = {
 const bookingReducer = (state, action) => {
   switch (action.type) {
     case 'SET_LOADING':
-      return {
-        ...state,
-        isLoading: action.payload
-      };
+      return { ...state, isLoading: action.payload };
     case 'SET_ERROR':
-      return {
-        ...state,
-        error: action.payload,
-        isLoading: false
-      };
+      return { ...state, error: action.payload, isLoading: false };
     case 'SET_BRANCHES':
-      return {
-        ...state,
-        branches: action.payload,
-        isLoading: false
-      };
-    case 'SET_BRANCH':
-      return {
-        ...state,
+      return { ...state, branches: action.payload };
+    case 'SELECT_BRANCH':
+      return { 
+        ...state, 
         selectedBranch: action.payload,
-        step: 'datetime'
+        selectedDate: null,
+        selectedTime: null,
+        selectedTable: null,
+        availableTables: []
       };
-    case 'SET_DATETIME':
-      return {
-        ...state,
-        selectedDate: action.payload.date,
-        selectedTime: action.payload.time,
-        step: 'guests'
+    case 'SELECT_DATE':
+      return { 
+        ...state, 
+        selectedDate: action.payload,
+        selectedTime: null,
+        selectedTable: null,
+        availableTables: []
       };
-    case 'SET_GUESTS':
-      return {
-        ...state,
+    case 'SELECT_TIME':
+      return { 
+        ...state, 
+        selectedTime: action.payload,
+        selectedTable: null,
+        availableTables: []
+      };
+    case 'SET_GUEST_COUNT':
+      return { 
+        ...state, 
         guestCount: action.payload,
-        step: 'table'
-      };
-    case 'SET_TABLE':
-      return {
-        ...state,
-        selectedTable: action.payload,
-        step: 'details'
+        selectedTable: null,
+        availableTables: []
       };
     case 'SET_AVAILABLE_TABLES':
-      return {
-        ...state,
-        availableTables: action.payload,
-        isLoading: false
+      return { ...state, availableTables: action.payload };
+    case 'SELECT_TABLE':
+      return { ...state, selectedTable: action.payload };
+    case 'UPDATE_CUSTOMER_INFO':
+      return { 
+        ...state, 
+        customerInfo: { ...state.customerInfo, ...action.payload }
       };
-    case 'SET_DETAILS':
-      return {
-        ...state,
-        customerDetails: action.payload,
-        step: 'confirmation'
-      };
-    case 'CONFIRM_BOOKING':
-      return {
-        ...state,
-        bookingConfirmed: true,
-        step: 'success',
-        isLoading: false
-      };
-    case 'SET_BOOKING_HISTORY':
-      return {
-        ...state,
-        bookingHistory: action.payload,
-        isLoading: false
-      };
+    case 'SET_BOOKING_REFERENCE':
+      return { ...state, bookingReference: action.payload };
     case 'RESET_BOOKING':
-      return {
-        ...initialBookingState,
-        branches: state.branches
-      };
-    case 'SET_STEP':
-      return {
-        ...state,
-        step: action.payload
+      return { 
+        ...initialState,
+        branches: state.branches,
+        customerInfo: {
+          ...initialState.customerInfo,
+          lineUserId: state.customerInfo.lineUserId
+        }
       };
     default:
       return state;
@@ -109,192 +89,114 @@ const bookingReducer = (state, action) => {
 };
 
 export const BookingProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(bookingReducer, initialBookingState);
+  const [state, dispatch] = useReducer(bookingReducer, initialState);
+  const { liffUser } = useLiffContext();
 
-  // Load branches on mount
+  // Update customer info when LIFF user is available
   useEffect(() => {
+    if (liffUser) {
+      dispatch({
+        type: 'UPDATE_CUSTOMER_INFO',
+        payload: {
+          name: liffUser.displayName || '',
+          lineUserId: liffUser.userId || ''
+        }
+      });
+    }
+  }, [liffUser]);
+
+  // Load branches on component mount
+  useEffect(() => {
+    const loadBranches = async () => {
+      try {
+        dispatch({ type: 'SET_LOADING', payload: true });
+        const branches = await apiService.getBranches();
+        dispatch({ type: 'SET_BRANCHES', payload: branches });
+      } catch (error) {
+        console.error('Failed to load branches:', error);
+        dispatch({ type: 'SET_ERROR', payload: 'ไม่สามารถโหลดข้อมูลสาขาได้' });
+      } finally {
+        dispatch({ type: 'SET_LOADING', payload: false });
+      }
+    };
+
     loadBranches();
   }, []);
 
-  const loadBranches = async () => {
+  const selectBranch = (branch) => {
+    dispatch({ type: 'SELECT_BRANCH', payload: branch });
+  };
+
+  const selectDate = (date) => {
+    dispatch({ type: 'SELECT_DATE', payload: date });
+  };
+
+  const selectTime = (time) => {
+    dispatch({ type: 'SELECT_TIME', payload: time });
+  };
+
+  const setGuestCount = (count) => {
+    dispatch({ type: 'SET_GUEST_COUNT', payload: count });
+  };
+
+  const loadAvailableTables = async () => {
+    if (!state.selectedBranch || !state.selectedDate || !state.selectedTime) {
+      return;
+    }
+
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
-      const response = await branchAPI.getBranches();
-      if (response.success) {
-        dispatch({ type: 'SET_BRANCHES', payload: response.data });
-      } else {
-        throw new Error('Failed to load branches');
-      }
-    } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to load branches' });
-      console.error('Error loading branches:', error);
       
-      // Fallback to mock data if API fails
-      const mockBranches = [
-        {
-          id: 1,
-          name: 'Phicha สาขาสยาม',
-          address: '991 ถนนพระราม 1 แขวงปทุมวัน เขตปทุมวัน กรุงเทพมหานคร 10330',
-          phone: '0212345678',
-          email: 'siam@phicha.com',
-          latitude: 13.7563,
-          longitude: 100.5018,
-          open_time: '10:00',
-          close_time: '22:00',
-          description: 'สาขาใจกลางเมือง ใกล้ BTS สยาม',
-          image_url: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800'
-        },
-        {
-          id: 2,
-          name: 'Phicha สาขาอโศก',
-          address: '2922 ถนนสุขุมวิท แขวงคลองตัน เขตคลองเตย กรุงเทพมหานคร 10110',
-          phone: '0212345679',
-          email: 'asoke@phicha.com',
-          latitude: 13.7367,
-          longitude: 100.5595,
-          open_time: '11:00',
-          close_time: '23:00',
-          description: 'สาขาในย่านธุรกิจ ใกล้ MRT สุขุมวิท',
-          image_url: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800'
-        }
-      ];
-      dispatch({ type: 'SET_BRANCHES', payload: mockBranches });
+      const dateTimeString = `${state.selectedDate}T${state.selectedTime}:00`;
+      const tables = await apiService.getAvailableTables(
+        state.selectedBranch.id,
+        dateTimeString,
+        state.guestCount
+      );
+      
+      dispatch({ type: 'SET_AVAILABLE_TABLES', payload: tables });
+    } catch (error) {
+      console.error('Failed to load available tables:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'ไม่สามารถโหลดข้อมูลโต๊ะว่างได้' });
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 
-  const setBranch = (branch) => {
-    dispatch({ type: 'SET_BRANCH', payload: branch });
+  const selectTable = (table) => {
+    dispatch({ type: 'SELECT_TABLE', payload: table });
   };
 
-  const setDateTime = (date, time) => {
-    dispatch({ type: 'SET_DATETIME', payload: { date, time } });
+  const updateCustomerInfo = (info) => {
+    dispatch({ type: 'UPDATE_CUSTOMER_INFO', payload: info });
   };
 
-  const setGuests = (count) => {
-    dispatch({ type: 'SET_GUESTS', payload: count });
-  };
-
-  const setTable = (tableId) => {
-    dispatch({ type: 'SET_TABLE', payload: tableId });
-  };
-
-  const loadAvailableTables = async (branchId, date, time) => {
+  const createBooking = async () => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
-      const formattedDate = date.toISOString().split('T')[0];
-      const response = await branchAPI.checkAvailability(branchId, formattedDate, time);
-      
-      if (response.success) {
-        dispatch({ type: 'SET_AVAILABLE_TABLES', payload: response.data });
-      } else {
-        throw new Error('Failed to load tables');
-      }
-    } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to load available tables' });
-      console.error('Error loading available tables:', error);
-      
-      // Fallback to mock table data
-      const mockTables = [
-        { table_id: 1, table_number: 'T01', seats: 2, type: 'window', zone: 'window', is_available: true },
-        { table_id: 2, table_number: 'T02', seats: 2, type: 'window', zone: 'window', is_available: false },
-        { table_id: 3, table_number: 'T03', seats: 4, type: 'window', zone: 'window', is_available: true },
-        { table_id: 4, table_number: 'T04', seats: 4, type: 'standard', zone: 'center', is_available: true },
-        { table_id: 5, table_number: 'T05', seats: 4, type: 'standard', zone: 'center', is_available: true },
-        { table_id: 6, table_number: 'T06', seats: 6, type: 'standard', zone: 'center', is_available: false },
-        { table_id: 7, table_number: 'T07', seats: 4, type: 'standard', zone: 'center', is_available: true },
-        { table_id: 8, table_number: 'T08', seats: 8, type: 'large', zone: 'back', is_available: true },
-        { table_id: 9, table_number: 'T09', seats: 8, type: 'large', zone: 'back', is_available: false },
-        { table_id: 10, table_number: 'T10', seats: 6, type: 'standard', zone: 'back', is_available: true },
-        { table_id: 11, table_number: 'V01', seats: 4, type: 'vip', zone: 'vip', is_available: true },
-        { table_id: 12, table_number: 'V02', seats: 6, type: 'vip', zone: 'vip', is_available: true },
-        { table_id: 13, table_number: 'V03', seats: 8, type: 'vip', zone: 'vip', is_available: true },
-      ];
-      dispatch({ type: 'SET_AVAILABLE_TABLES', payload: mockTables });
-    }
-  };
 
-  const setDetails = (details) => {
-    dispatch({ type: 'SET_DETAILS', payload: details });
-  };
-
-  const confirmBooking = async () => {
-    try {
-      dispatch({ type: 'SET_LOADING', payload: true });
-      
       const bookingData = {
-        branch_id: state.selectedBranch.id,
-        table_id: state.selectedTable ? state.selectedTable.table_id || state.selectedTable : null,
-        customer_name: state.customerDetails.name,
-        customer_phone: state.customerDetails.phone,
-        customer_email: state.customerDetails.email,
-        booking_date: state.selectedDate.toISOString().split('T')[0],
-        booking_time: state.selectedTime,
-        guest_count: state.guestCount,
-        notes: state.customerDetails.notes,
-        requirements: JSON.stringify(state.customerDetails.requirements || {})
+        branchId: state.selectedBranch.id,
+        tableId: state.selectedTable?.id,
+        dateTime: `${state.selectedDate}T${state.selectedTime}:00`,
+        guestCount: state.guestCount,
+        customerName: state.customerInfo.name,
+        customerPhone: state.customerInfo.phone,
+        customerEmail: state.customerInfo.email,
+        lineUserId: state.customerInfo.lineUserId,
+        notes: state.customerInfo.notes
       };
 
-      const response = await bookingAPI.createBooking(bookingData);
+      const booking = await apiService.createBooking(bookingData);
+      dispatch({ type: 'SET_BOOKING_REFERENCE', payload: booking.reference });
       
-      if (response.success) {
-        // Store booking reference for success page
-        window.bookingReference = response.data.booking_ref;
-        dispatch({ type: 'CONFIRM_BOOKING' });
-        return response.data;
-      } else {
-        throw new Error(response.error || 'Failed to create booking');
-      }
+      return booking;
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: error.error || 'Failed to create booking' });
-      
-      // For demo purposes, still proceed if API fails
-      const mockBookingRef = `PH${Math.random().toString(36).substr(2, 8).toUpperCase()}`;
-      window.bookingReference = mockBookingRef;
-      dispatch({ type: 'CONFIRM_BOOKING' });
-      
+      console.error('Failed to create booking:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'ไม่สามารถทำการจองได้ กรุณาลองใหม่อีกครั้ง' });
       throw error;
-    }
-  };
-
-  const getBookingHistory = async (phone) => {
-    try {
-      dispatch({ type: 'SET_LOADING', payload: true });
-      const response = await bookingAPI.getCustomerBookings(phone);
-      
-      if (response.success) {
-        dispatch({ type: 'SET_BOOKING_HISTORY', payload: response.data });
-        return response.data;
-      } else {
-        throw new Error('Failed to load booking history');
-      }
-    } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to load booking history' });
-      console.error('Error loading booking history:', error);
-      
-      // Return empty array as fallback
-      dispatch({ type: 'SET_BOOKING_HISTORY', payload: [] });
-      return [];
-    }
-  };
-
-  const cancelBooking = async (bookingId) => {
-    try {
-      dispatch({ type: 'SET_LOADING', payload: true });
-      const response = await bookingAPI.cancelBooking(bookingId);
-      
-      if (response.success) {
-        // Reload booking history if customer phone is available
-        if (state.customerDetails.phone) {
-          await getBookingHistory(state.customerDetails.phone);
-        }
-        dispatch({ type: 'SET_LOADING', payload: false });
-        return true;
-      } else {
-        throw new Error(response.error || 'Failed to cancel booking');
-      }
-    } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: error.error || 'Failed to cancel booking' });
-      throw error;
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 
@@ -302,34 +204,22 @@ export const BookingProvider = ({ children }) => {
     dispatch({ type: 'RESET_BOOKING' });
   };
 
-  const setStep = (step) => {
-    dispatch({ type: 'SET_STEP', payload: step });
-  };
-
   const clearError = () => {
     dispatch({ type: 'SET_ERROR', payload: null });
   };
 
   const value = {
-    // State
     ...state,
-    
-    // Actions
-    setBranch,
-    setDateTime,
-    setGuests,
-    setTable,
-    setDetails,
-    confirmBooking,
-    resetBooking,
-    setStep,
-    clearError,
-    
-    // API actions
-    loadBranches,
+    selectBranch,
+    selectDate,
+    selectTime,
+    setGuestCount,
     loadAvailableTables,
-    getBookingHistory,
-    cancelBooking,
+    selectTable,
+    updateCustomerInfo,
+    createBooking,
+    resetBooking,
+    clearError
   };
 
   return (
@@ -339,10 +229,10 @@ export const BookingProvider = ({ children }) => {
   );
 };
 
-export const useBookingContext = () => {
+export const useBooking = () => {
   const context = useContext(BookingContext);
   if (!context) {
-    throw new Error('useBookingContext must be used within a BookingProvider');
+    throw new Error('useBooking must be used within BookingProvider');
   }
   return context;
 }; 

@@ -11,7 +11,7 @@ import {
   ShareIcon,
   ClockIcon as HistoryIcon
 } from '@heroicons/react/24/outline';
-import { useBookingContext } from '../context/BookingContext';
+import { useBooking } from '../context/BookingContext';
 
 import Button from '../components/UI/Button';
 
@@ -25,7 +25,7 @@ const BookingSuccess = () => {
     selectedTable, 
     customerDetails,
     resetBooking
-  } = useBookingContext();
+  } = useBooking();
   
   // Removed LIFF functionality for now
 

@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format, addDays, isSameDay, isBefore, startOfDay } from 'date-fns';
 import { th } from 'date-fns/locale';
-import { useBookingContext } from '../context/BookingContext';
+import { useBooking } from '../context/BookingContext';
 import Button from '../components/UI/Button';
 
 const DateTimeSelection = () => {
   const navigate = useNavigate();
-  const { selectedBranch, timeSlots, setDateTime } = useBookingContext();
+  const { selectedBranch, timeSlots, setDateTime } = useBooking();
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
 

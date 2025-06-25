@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { useBookingContext } from '../context/BookingContext';
+import { useBooking } from '../context/BookingContext';
 
 import Button from '../components/UI/Button';
 
 const BookingDetails = () => {
   const navigate = useNavigate();
-  const { customerDetails, setDetails } = useBookingContext();
+  const { customerDetails, setCustomerDetails } = useBooking();
 
   
   const {
@@ -37,7 +37,7 @@ const BookingDetails = () => {
   }, [customerDetails, setValue]);
 
   const onSubmit = (data) => {
-    setDetails(data);
+    setCustomerDetails(data);
     navigate('/confirmation');
   };
 

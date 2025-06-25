@@ -1,244 +1,185 @@
 import React, { useEffect } from 'react';
-import { useBookingContext } from '../context/BookingContext';
-import Layout from '../components/Layout/Layout';
-import Button from '../components/UI/Button';
+import { useNavigate } from 'react-router-dom';
+import { useBooking } from '../context/BookingContext';
 import LoadingScreen from '../components/UI/LoadingScreen';
 import TableMap from '../components/UI/TableMap';
+import Button from '../components/UI/Button';
 
 const TableSelection = () => {
+  const navigate = useNavigate();
   const { 
-    selectedBranch, 
-    selectedDate, 
-    selectedTime, 
+    selectedBranch,
+    selectedDate,
+    selectedTime,
     guestCount,
     availableTables,
     selectedTable,
-    setTable,
-    setStep,
+    selectTable,
+    loadAvailableTables,
     isLoading,
-    error,
-    loadAvailableTables
-  } = useBookingContext();
+    error
+  } = useBooking();
 
   useEffect(() => {
     if (selectedBranch && selectedDate && selectedTime) {
-      loadAvailableTables(selectedBranch.id, selectedDate, selectedTime);
+      loadAvailableTables();
     }
-  }, [selectedBranch, selectedDate, selectedTime]);
+  }, [selectedBranch, selectedDate, selectedTime, guestCount]);
 
   const handleTableSelect = (table) => {
-    setTable(table);
+    selectTable(table);
   };
 
   const handleContinue = () => {
-    setStep('details');
+    navigate('/details');
   };
 
   const handleSkipTableSelection = () => {
-    setTable(null);
-    setStep('details');
+    selectTable(null);
+    navigate('/details');
   };
 
+  if (!selectedBranch || !selectedDate || !selectedTime) {
+    navigate('/branch');
+    return null;
+  }
+
   if (isLoading) {
-    return <LoadingScreen message="กำลังโหลดข้อมูลโต๊ะ..." />;
+    return <LoadingScreen />;
   }
 
   if (error) {
     return (
-      <Layout>
-        <div className="min-h-screen bg-gray-50 py-12">
-          <div className="max-w-4xl mx-auto px-4 text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">เกิดข้อผิดพลาด</h1>
-            <p className="text-gray-600 mb-6">{error}</p>
-            <Button 
-              onClick={() => setStep('datetime')}
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              กลับไปเลือกวันและเวลาใหม่
-            </Button>
-          </div>
+      <div className="flex-1 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <Button onClick={() => loadAvailableTables()}>
+            ลองใหม่
+          </Button>
         </div>
-      </Layout>
+      </div>
     );
   }
 
-  const getTablesByZone = (zone) => {
-    return availableTables.filter(table => table.zone === zone);
-  };
-
-  const getTableTypeLabel = (type) => {
-    switch (type) {
-      case 'window': return 'โต๊ะริมหน้าต่าง';
-      case 'standard': return 'โต๊ะธรรมดา';
-      case 'large': return 'โต๊ะใหญ่';
-      case 'vip': return 'โต๊ะ VIP';
-      default: return 'โต๊ะ';
-    }
-  };
-
-  const getTableColor = (table) => {
-    if (!table.is_available) return 'bg-gray-300 text-gray-500';
-    if (selectedTable?.table_id === table.table_id) return 'bg-red-600 text-white';
-    
-    switch (table.type) {
-      case 'window': return 'bg-blue-100 text-blue-800 hover:bg-blue-200';
-      case 'vip': return 'bg-purple-100 text-purple-800 hover:bg-purple-200';
-      case 'large': return 'bg-green-100 text-green-800 hover:bg-green-200';
-      default: return 'bg-gray-100 text-gray-800 hover:bg-gray-200';
-    }
-  };
-
   return (
-    <Layout>
-      <div className="min-h-screen bg-gray-50 py-12">
-        <div className="max-w-6xl mx-auto px-4">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">เลือกโต๊ะ</h1>
-            <div className="text-gray-600 space-y-1">
-              <p>สาขา: {selectedBranch?.name}</p>
-              <p>วันที่: {selectedDate?.toLocaleDateString('th-TH')} เวลา: {selectedTime}</p>
-              <p>จำนวนผู้ใช้บริการ: {guestCount} คน</p>
-            </div>
+    <div className="flex-1 p-4">
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold mb-2">เลือกโต๊ะ</h2>
+        <p className="text-gray-600">
+          {selectedBranch.name} • {selectedDate} • {selectedTime} • {guestCount} ท่าน
+        </p>
+      </div>
+
+      {/* Table Map */}
+      <div className="mb-6">
+        <h3 className="text-lg font-medium mb-4">แผนผังโต๊ะ</h3>
+        <div className="bg-gray-50 rounded-lg p-4">
+          <TableMap 
+            tables={availableTables}
+            selectedTable={selectedTable}
+            onTableSelect={handleTableSelect}
+            guestCount={guestCount}
+          />
+        </div>
+      </div>
+
+      {/* Table List */}
+      <div className="mb-6">
+        <h3 className="text-lg font-medium mb-4">รายการโต๊ะที่ว่าง</h3>
+        
+        {availableTables.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            <p>ไม่มีโต๊ะว่างในช่วงเวลาที่เลือก</p>
+            <p className="text-sm mt-2">กรุณาเลือกเวลาอื่นหรือติดต่อร้านโดยตรง</p>
           </div>
-
-          {/* Legend */}
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-            <h3 className="text-lg font-semibold mb-4">คำอธิบาย</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="flex items-center space-x-2">
-                <div className="w-4 h-4 bg-blue-100 rounded"></div>
-                <span className="text-sm">โต๊ะริมหน้าต่าง</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-4 h-4 bg-gray-100 rounded"></div>
-                <span className="text-sm">โต๊ะธรรมดา</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-4 h-4 bg-green-100 rounded"></div>
-                <span className="text-sm">โต๊ะใหญ่</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-4 h-4 bg-purple-100 rounded"></div>
-                <span className="text-sm">โต๊ะ VIP</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Table Map */}
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-            <h3 className="text-lg font-semibold mb-4">แผนผังโต๊ะ</h3>
-            <TableMap 
-              tables={availableTables}
-              selectedTable={selectedTable}
-              onTableSelect={handleTableSelect}
-            />
-          </div>
-
-          {/* Table List by Zone */}
-          <div className="space-y-8 mb-8">
-            {['window', 'center', 'back', 'vip'].map(zone => {
-              const zoneTables = getTablesByZone(zone);
-              if (zoneTables.length === 0) return null;
-
-              const zoneLabels = {
-                'window': 'โซนริมหน้าต่าง',
-                'center': 'โซนกลาง',
-                'back': 'โซนด้านหลัง',
-                'vip': 'โซน VIP'
-              };
-
-              return (
-                <div key={zone} className="bg-white rounded-lg shadow-sm p-6">
-                  <h3 className="text-lg font-semibold mb-4">{zoneLabels[zone]}</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                    {zoneTables.map((table) => (
-                      <button
-                        key={table.table_id}
-                        onClick={() => table.is_available && handleTableSelect(table)}
-                        disabled={!table.is_available}
-                        className={`
-                          p-4 rounded-lg border text-center transition-all duration-200
-                          ${getTableColor(table)}
-                          ${table.is_available ? 'cursor-pointer' : 'cursor-not-allowed'}
-                          ${selectedTable?.table_id === table.table_id ? 'ring-2 ring-red-500' : ''}
-                        `}
-                      >
-                        <div className="font-semibold">{table.table_number}</div>
-                        <div className="text-sm">{table.seats} ที่นั่ง</div>
-                        <div className="text-xs mt-1">{getTableTypeLabel(table.type)}</div>
-                        {!table.is_available && (
-                          <div className="text-xs text-red-500 mt-1">ไม่ว่าง</div>
-                        )}
-                      </button>
-                    ))}
+        ) : (
+          <div className="grid grid-cols-1 gap-3">
+            {availableTables.map((table) => (
+              <div
+                key={table.id}
+                onClick={() => handleTableSelect(table)}
+                className={`p-4 border-2 rounded-lg transition-all cursor-pointer ${
+                  selectedTable?.id === table.id
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-gray-300 bg-white hover:border-gray-400'
+                }`}
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h4 className="font-semibold">โต๊ะ {table.table_number}</h4>
+                    <p className="text-sm text-gray-600">
+                      {table.seats} ที่นั่ง • {table.type === 'window' ? 'ริมหน้าต่าง' : 
+                        table.type === 'vip' ? 'VIP' : 
+                        table.type === 'large' ? 'โต๊ะใหญ่' : 'โต๊ะธรรมดา'}
+                    </p>
+                    {table.position_x !== null && table.position_y !== null && (
+                      <p className="text-xs text-gray-500">
+                        ตำแหน่ง: ({table.position_x}, {table.position_y})
+                      </p>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    {table.seats >= guestCount ? (
+                      <span className="text-green-600 text-sm font-medium">เหมาะสม</span>
+                    ) : (
+                      <span className="text-orange-600 text-sm font-medium">เล็กไป</span>
+                    )}
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
+        )}
+      </div>
 
-          {/* No tables available message */}
-          {availableTables.length === 0 && (
-            <div className="bg-white rounded-lg shadow-sm p-8 text-center">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">ไม่มีโต๊ะว่าง</h3>
-              <p className="text-gray-600 mb-6">
-                ขออภัย ไม่มีโต๊ะว่างในวันและเวลาที่เลือก กรุณาเลือกวันหรือเวลาอื่น
-              </p>
-              <Button 
-                onClick={() => setStep('datetime')}
-                className="bg-red-600 hover:bg-red-700 text-white"
-              >
-                เลือกวันและเวลาใหม่
-              </Button>
-            </div>
-          )}
-
-          {/* Action Buttons */}
-          {availableTables.length > 0 && (
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {/* Skip table selection */}
-              <Button
-                onClick={handleSkipTableSelection}
-                className="bg-gray-600 hover:bg-gray-700 text-white px-8 py-3"
-              >
-                ไม่เลือกโต๊ะ (ให้ร้านจัดให้)
-              </Button>
-
-              {/* Continue with selected table */}
-              {selectedTable && (
-                <Button
-                  onClick={handleContinue}
-                  className="bg-red-600 hover:bg-red-700 text-white px-8 py-3"
-                >
-                  ดำเนินการต่อ (โต๊ะ {selectedTable.table_number})
-                </Button>
-              )}
-            </div>
-          )}
-
-          {/* Table selection info */}
-          {selectedTable && (
-            <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-              <p className="text-blue-900">
-                <span className="font-semibold">โต๊ะที่เลือก:</span> {selectedTable.table_number} 
-                ({selectedTable.seats} ที่นั่ง, {getTableTypeLabel(selectedTable.type)})
-              </p>
-            </div>
-          )}
-
-          {/* Back button */}
-          <div className="text-center mt-8">
-            <button
-              onClick={() => setStep('guests')}
-              className="text-gray-600 hover:text-gray-800 underline"
-            >
-              ← กลับไปแก้ไขจำนวนผู้ใช้บริการ
-            </button>
+      {/* Table Type Legend */}
+      <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+        <h4 className="font-medium mb-2">คำอธิบายประเภทโต๊ะ</h4>
+        <div className="grid grid-cols-2 gap-2 text-sm">
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-blue-500 rounded mr-2"></div>
+            <span>ริมหน้าต่าง</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-purple-500 rounded mr-2"></div>
+            <span>VIP</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>
+            <span>โต๊ะใหญ่</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-gray-500 rounded mr-2"></div>
+            <span>โต๊ะธรรมดา</span>
           </div>
         </div>
       </div>
-    </Layout>
+
+      {/* Action Buttons */}
+      <div className="space-y-3">
+        {selectedTable && (
+          <Button 
+            onClick={handleContinue}
+            className="w-full"
+          >
+            ดำเนินการต่อกับโต๊ะ {selectedTable.table_number}
+          </Button>
+        )}
+        
+        <Button 
+          onClick={handleSkipTableSelection}
+          variant="outline"
+          className="w-full"
+        >
+          ข้ามการเลือกโต๊ะ (ให้ร้านจัดให้)
+        </Button>
+      </div>
+
+      {/* Note */}
+      <div className="mt-4 text-sm text-gray-600 text-center">
+        <p>หมายเหตุ: หากไม่เลือกโต๊ะ ทางร้านจะจัดโต๊ะที่เหมาะสมให้อัตโนมัติ</p>
+      </div>
+    </div>
   );
 };
 

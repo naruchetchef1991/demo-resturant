@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useBookingContext } from '../context/BookingContext';
+import { useBooking } from '../context/BookingContext';
 import Layout from '../components/Layout/Layout';
 import Button from '../components/UI/Button';
 import LoadingScreen from '../components/UI/LoadingScreen';
@@ -17,7 +17,7 @@ const BookingConfirmation = () => {
     isLoading,
     error,
     clearError
-  } = useBookingContext();
+  } = useBooking();
 
   const [isConfirming, setIsConfirming] = useState(false);
 
