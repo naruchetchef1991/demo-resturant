@@ -18,6 +18,7 @@ const initialState = {
     notes: ''
   },
   bookingReference: null,
+  bookingHistory: [],
   isLoading: false,
   error: null,
   availableTables: [],
@@ -80,6 +81,8 @@ const bookingReducer = (state, action) => {
       };
     case 'SET_BOOKING_REFERENCE':
       return { ...state, bookingReference: action.payload };
+    case 'SET_BOOKING_HISTORY':
+      return { ...state, bookingHistory: action.payload };
     case 'RESET_BOOKING':
       return { 
         ...initialState,
@@ -225,14 +228,14 @@ export const BookingProvider = ({ children }) => {
       }
 
       const bookingData = {
-        branch_id: state.selectedBranch.id,
-        table_id: state.selectedTable?.id,
+        branch_id: Number(state.selectedBranch.id),
+        table_id: state.selectedTable?.id ? Number(state.selectedTable.id) : null,
         customer_name: state.customerInfo.name,
         customer_phone: state.customerInfo.phone,
         customer_email: state.customerInfo.email,
         booking_date: dateString,
         booking_time: state.selectedTime,
-        guest_count: state.guestCount,
+        guest_count: Number(state.guestCount),
         notes: state.customerInfo.notes,
         requirements: JSON.stringify(state.customerInfo.requirements || {})
       };
@@ -267,14 +270,14 @@ export const BookingProvider = ({ children }) => {
       }
 
       const bookingData = {
-        branch_id: state.selectedBranch.id,
-        table_id: state.selectedTable?.id,
+        branch_id: Number(state.selectedBranch.id),
+        table_id: state.selectedTable?.id ? Number(state.selectedTable.id) : null,
         customer_name: state.customerInfo.name,
         customer_phone: state.customerInfo.phone,
         customer_email: state.customerInfo.email,
         booking_date: dateString,
         booking_time: state.selectedTime,
-        guest_count: state.guestCount,
+        guest_count: Number(state.guestCount),
         notes: state.customerInfo.notes,
         requirements: JSON.stringify(state.customerInfo.requirements || {})
       };
@@ -297,6 +300,58 @@ export const BookingProvider = ({ children }) => {
     dispatch({ type: 'RESET_BOOKING' });
   };
 
+  const getBookingHistory = async (phone) => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
+      
+      console.log('Fetching booking history for phone:', phone);
+      const response = await bookingAPI.getCustomerBookings(phone);
+      console.log('Booking history response:', response);
+      
+      const bookings = response.data || response;
+      console.log('Processed booking history:', bookings);
+      
+      dispatch({ type: 'SET_BOOKING_HISTORY', payload: bookings });
+      
+      return bookings;
+    } catch (error) {
+      console.error('Failed to fetch booking history:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'ไม่สามารถโหลดประวัติการจองได้' });
+      dispatch({ type: 'SET_BOOKING_HISTORY', payload: [] });
+      throw error;
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
+  const cancelBooking = async (bookingId) => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
+      
+      console.log('Cancelling booking:', bookingId);
+      const response = await bookingAPI.cancelBooking(bookingId);
+      console.log('Cancel booking response:', response);
+      
+      // Update the booking in history to cancelled status
+      const updatedHistory = state.bookingHistory.map(booking => 
+        booking.id === bookingId 
+          ? { ...booking, status: 'cancelled' }
+          : booking
+      );
+      dispatch({ type: 'SET_BOOKING_HISTORY', payload: updatedHistory });
+      
+      return response;
+    } catch (error) {
+      console.error('Failed to cancel booking:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'ไม่สามารถยกเลิกการจองได้' });
+      throw error;
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
   const clearError = () => {
     dispatch({ type: 'SET_ERROR', payload: null });
   };
@@ -315,6 +370,8 @@ export const BookingProvider = ({ children }) => {
     setCustomerDetails,
     confirmBooking,
     createBooking,
+    getBookingHistory,
+    cancelBooking,
     resetBooking,
     clearError
   };
