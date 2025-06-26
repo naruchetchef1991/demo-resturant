@@ -12,6 +12,7 @@ import {
   ClockIcon as HistoryIcon
 } from '@heroicons/react/24/outline';
 import { useBooking } from '../context/BookingContext';
+import Icon from '../components/UI/Icon';
 
 import Button from '../components/UI/Button';
 
@@ -120,11 +121,19 @@ const BookingSuccess = () => {
     <div className="flex-1 p-4 space-y-6 fade-in max-w-2xl mx-auto">
       {/* Success Header */}
       <div className="text-center">
-        <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-          <CheckCircleIcon className="w-8 h-8 text-green-600" />
+        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">จองสำเร็จ!</h2>
-        <p className="text-gray-600">การจองโต๊ะของคุณได้รับการยืนยันแล้ว</p>
+        
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          การจองสำเร็จ!
+        </h1>
+        
+        <p className="text-gray-600 mb-8">
+          ขอบคุณที่ใช้บริการ Phicha Booking! <Icon name="dining" className="w-5 h-5 inline" />
+        </p>
       </div>
 
       {/* Booking Reference */}
@@ -265,7 +274,7 @@ const BookingSuccess = () => {
       {/* Thank You Message */}
       <div className="text-center pt-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          ขอบคุณที่ใช้บริการ Phicha Booking! 🍽️
+          ขอบคุณที่ใช้บริการ Phicha Booking! <Icon name="dining" className="w-5 h-5 inline" />
         </h3>
         <p className="text-gray-600">
           เราหวังว่าคุณจะมีประสบการณ์การรับประทานอาหารที่ดี
