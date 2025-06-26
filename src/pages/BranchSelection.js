@@ -47,6 +47,30 @@ const BranchSelection = () => {
             key={branch.id} 
             className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden"
           >
+            {/* Branch Image */}
+            {branch.image_url && (
+              <div className="relative h-48 w-full">
+                <img 
+                  src={branch.image_url} 
+                  alt={`รูปภาพสาขา ${branch.name}`}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+                {/* Fallback when image fails to load */}
+                <div className="absolute inset-0 bg-gray-100 flex items-center justify-center hidden">
+                  <div className="text-center">
+                    <svg className="w-12 h-12 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <p className="text-gray-500 text-sm">ไม่สามารถโหลดรูปภาพได้</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             {/* Branch Details */}
             <div className="p-4">
               <h3 className="text-lg font-bold text-gray-900 mb-2">
