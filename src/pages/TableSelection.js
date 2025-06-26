@@ -106,7 +106,7 @@ const TableSelection = () => {
                 onClick={() => handleTableSelect(table)}
                 className={`p-4 border-2 rounded-lg transition-all cursor-pointer ${
                   selectedTable?.id === table.id
-                    ? 'border-blue-500 bg-blue-50'
+                    ? 'border-primary-500 bg-primary-50'
                     : 'border-gray-300 bg-white hover:border-gray-400'
                 }`}
               >
@@ -143,15 +143,15 @@ const TableSelection = () => {
         <h4 className="font-medium mb-2">คำอธิบายประเภทโต๊ะ</h4>
         <div className="grid grid-cols-2 gap-2 text-sm">
           <div className="flex items-center">
-            <div className="w-3 h-3 bg-blue-500 rounded mr-2"></div>
+            <div className="w-3 h-3 bg-primary-400 rounded mr-2"></div>
             <span>ริมหน้าต่าง</span>
           </div>
           <div className="flex items-center">
-            <div className="w-3 h-3 bg-purple-500 rounded mr-2"></div>
+            <div className="w-3 h-3 bg-primary-600 rounded mr-2"></div>
             <span>VIP</span>
           </div>
           <div className="flex items-center">
-            <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>
+            <div className="w-3 h-3 bg-primary-500 rounded mr-2"></div>
             <span>โต๊ะใหญ่</span>
           </div>
           <div className="flex items-center">

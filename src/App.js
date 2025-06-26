@@ -15,6 +15,9 @@ import BookingDetails from './pages/BookingDetails';
 import BookingConfirmation from './pages/BookingConfirmation';
 import BookingSuccess from './pages/BookingSuccess';
 import BookingHistory from './pages/BookingHistory';
+import Profile from './pages/Profile';
+import Promotion from './pages/Promotion';
+import Store from './pages/Store';
 
 // Component to check LIFF authentication
 const LiffAuthGuard = ({ children }) => {
@@ -32,7 +35,7 @@ const LiffAuthGuard = ({ children }) => {
           <p className="text-gray-600 mb-4">{error}</p>
           <button 
             onClick={() => window.location.reload()}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            className="bg-primary-500 text-white px-4 py-2 rounded hover:bg-primary-600"
           >
             ลองใหม่
           </button>
@@ -66,7 +69,7 @@ const AppRoutes = () => {
     <BookingProvider>
       <Layout>
         <Routes>
-          <Route path="/" element={<Navigate to="/branch" replace />} />
+          <Route path="/" element={<Navigate to="/store" replace />} />
           <Route path="/branch" element={<BranchSelection />} />
           <Route path="/datetime" element={<DateTimeSelection />} />
           <Route path="/guests" element={<GuestCountSelection />} />
@@ -75,6 +78,9 @@ const AppRoutes = () => {
           <Route path="/confirmation" element={<BookingConfirmation />} />
           <Route path="/success" element={<BookingSuccess />} />
           <Route path="/history" element={<BookingHistory />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/promotion" element={<Promotion />} />
+          <Route path="/store" element={<Store />} />
         </Routes>
       </Layout>
     </BookingProvider>

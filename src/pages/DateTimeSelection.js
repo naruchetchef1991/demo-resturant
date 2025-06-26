@@ -108,7 +108,7 @@ const DateTimeSelection = () => {
                 onClick={() => handleDateSelect(date)}
                 className={`p-3 rounded-lg border-2 transition-all text-left ${
                   isSelected
-                    ? 'border-blue-500 bg-blue-50 text-blue-900'
+                    ? 'border-primary-500 bg-primary-50 text-primary-900'
                     : 'border-gray-200 bg-white text-gray-900 hover:border-gray-300'
                 }`}
               >
@@ -117,7 +117,7 @@ const DateTimeSelection = () => {
                 </div>
                 <div className="text-sm text-gray-600">
                   {format(date, 'd MMMM yyyy', { locale: th })}
-                  {isToday && <span className="text-blue-600 ml-1">(วันนี้)</span>}
+                  {isToday && <span className="text-primary-600 ml-1">(วันนี้)</span>}
                 </div>
               </button>
             );
@@ -133,7 +133,7 @@ const DateTimeSelection = () => {
             onClick={() => setShowTimeModal(true)}
             className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
               selectedTime
-                ? 'border-blue-500 bg-blue-50 text-blue-900'
+                ? 'border-primary-500 bg-primary-50 text-primary-900'
                 : 'border-gray-300 bg-white text-gray-900 hover:border-gray-400'
             }`}
           >
@@ -225,7 +225,7 @@ const DateTimeSelection = () => {
                         isUnavailable
                           ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
                           : isSelected
-                          ? 'border-blue-500 bg-blue-50 text-blue-900'
+                          ? 'border-primary-500 bg-primary-50 text-primary-900'
                           : 'border-gray-200 bg-white text-gray-900 hover:border-gray-300'
                       }`}
                     >

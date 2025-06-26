@@ -95,7 +95,7 @@ const BookingConfirmation = () => {
 
           {/* Booking Summary */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mb-8">
-            <div className="bg-red-600 text-white px-6 py-4">
+            <div className="bg-primary-600 text-white px-6 py-4">
               <h2 className="text-xl font-semibold">สรุปการจอง</h2>
             </div>
             

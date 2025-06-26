@@ -325,6 +325,31 @@ export const BookingProvider = ({ children }) => {
     }
   };
 
+  const getRecentBookings = async () => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
+      
+      console.log('Fetching recent bookings');
+      const response = await bookingAPI.getBookings({ limit: 10 });
+      console.log('Recent bookings response:', response);
+      
+      const bookings = response.data || response;
+      console.log('Processed recent bookings:', bookings);
+      
+      dispatch({ type: 'SET_BOOKING_HISTORY', payload: bookings });
+      
+      return bookings;
+    } catch (error) {
+      console.error('Failed to fetch recent bookings:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'ไม่สามารถโหลดประวัติการจองได้' });
+      dispatch({ type: 'SET_BOOKING_HISTORY', payload: [] });
+      throw error;
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
   const cancelBooking = async (bookingId) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
@@ -371,6 +396,7 @@ export const BookingProvider = ({ children }) => {
     confirmBooking,
     createBooking,
     getBookingHistory,
+    getRecentBookings,
     cancelBooking,
     resetBooking,
     clearError

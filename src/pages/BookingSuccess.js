@@ -186,30 +186,30 @@ const BookingSuccess = () => {
       </div>
 
       {/* Important Reminders */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h4 className="font-medium text-blue-900 mb-3">สิ่งที่ควรจำ</h4>
+      <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
+        <h4 className="font-medium text-primary-900 mb-3">สิ่งที่ควรจำ</h4>
         <div className="space-y-2">
           <div className="flex items-start space-x-2">
-            <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0"></div>
-            <p className="text-sm text-blue-800">
+            <div className="w-2 h-2 bg-primary-400 rounded-full mt-2 flex-shrink-0"></div>
+            <p className="text-sm text-primary-800">
               กรุณามาถึงก่อนเวลานัดหมาย 5-10 นาที
             </p>
           </div>
           <div className="flex items-start space-x-2">
-            <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0"></div>
-            <p className="text-sm text-blue-800">
+            <div className="w-2 h-2 bg-primary-400 rounded-full mt-2 flex-shrink-0"></div>
+            <p className="text-sm text-primary-800">
               หากมาช้ากว่า 15 นาที โต๊ะอาจถูกยกเลิก
             </p>
           </div>
           <div className="flex items-start space-x-2">
-            <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0"></div>
-            <p className="text-sm text-blue-800">
+            <div className="w-2 h-2 bg-primary-400 rounded-full mt-2 flex-shrink-0"></div>
+            <p className="text-sm text-primary-800">
               สามารถแสดงรหัสการจองหรือ LINE ที่หน้าร้าน
             </p>
           </div>
           <div className="flex items-start space-x-2">
-            <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0"></div>
-            <p className="text-sm text-blue-800">
+            <div className="w-2 h-2 bg-primary-400 rounded-full mt-2 flex-shrink-0"></div>
+            <p className="text-sm text-primary-800">
               หากต้องการยกเลิก กรุณาติดต่อร้านล่วงหน้า 2 ชั่วโมง
             </p>
           </div>

@@ -41,16 +41,16 @@ const TableMap = ({
   const getTableColor = (status, type) => {
     const colors = {
       available: {
-        standard: 'bg-green-100 border-green-300 hover:bg-green-200',
-        window: 'bg-blue-100 border-blue-300 hover:bg-blue-200',
-        large: 'bg-purple-100 border-purple-300 hover:bg-purple-200',
-        vip: 'bg-yellow-100 border-yellow-300 hover:bg-yellow-200'
+        standard: 'bg-gray-100 border-gray-300 hover:bg-gray-200',
+        window: 'bg-primary-100 border-primary-300 hover:bg-primary-200',
+        large: 'bg-primary-50 border-primary-200 hover:bg-primary-100',
+        vip: 'bg-primary-200 border-primary-400 hover:bg-primary-300'
       },
       selected: {
-        standard: 'bg-green-500 border-green-600 text-white',
-        window: 'bg-blue-500 border-blue-600 text-white',
-        large: 'bg-purple-500 border-purple-600 text-white',
-        vip: 'bg-yellow-500 border-yellow-600 text-white'
+        standard: 'bg-gray-500 border-gray-600 text-white',
+        window: 'bg-primary-500 border-primary-600 text-white',
+        large: 'bg-primary-400 border-primary-500 text-white',
+        vip: 'bg-primary-600 border-primary-700 text-white'
       },
       unavailable: {
         standard: 'bg-gray-200 border-gray-300 text-gray-500 cursor-not-allowed',
@@ -83,15 +83,15 @@ const TableMap = ({
       {/* Legend */}
       <div className="flex flex-wrap gap-4 mb-6 text-sm">
         <div className="flex items-center space-x-2">
-          <div className="w-4 h-4 bg-green-100 border border-green-300 rounded"></div>
+          <div className="w-4 h-4 bg-gray-100 border border-gray-300 rounded"></div>
           <span>ว่าง</span>
         </div>
         <div className="flex items-center space-x-2">
-          <div className="w-4 h-4 bg-blue-100 border border-blue-300 rounded"></div>
+          <div className="w-4 h-4 bg-primary-100 border border-primary-300 rounded"></div>
           <span>ใกล้หน้าต่าง</span>
         </div>
         <div className="flex items-center space-x-2">
-          <div className="w-4 h-4 bg-yellow-100 border border-yellow-300 rounded"></div>
+          <div className="w-4 h-4 bg-primary-200 border border-primary-400 rounded"></div>
           <span>VIP</span>
         </div>
         <div className="flex items-center space-x-2">
@@ -99,7 +99,7 @@ const TableMap = ({
           <span>ไม่ว่าง</span>
         </div>
         <div className="flex items-center space-x-2">
-          <CheckCircleIcon className="w-4 h-4 text-green-600" />
+          <CheckCircleIcon className="w-4 h-4 text-primary-600" />
           <span>เลือกแล้ว</span>
         </div>
       </div>
@@ -111,7 +111,7 @@ const TableMap = ({
           {/* Restaurant Elements */}
           
           {/* หน้าต่าง */}
-          <div className="absolute top-0 left-0 right-0 h-8 bg-blue-200 rounded-t-lg flex items-center justify-center text-xs font-medium text-blue-800">
+          <div className="absolute top-0 left-0 right-0 h-8 bg-primary-200 rounded-t-lg flex items-center justify-center text-xs font-medium text-primary-800">
             หน้าต่าง (วิวสวย)
           </div>
           

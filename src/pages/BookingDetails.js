@@ -214,9 +214,9 @@ const BookingDetails = () => {
       </form>
 
       {/* Privacy Notice */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h4 className="font-medium text-blue-900 mb-2">ข้อมูลส่วนบุคคล</h4>
-        <p className="text-sm text-blue-800">
+      <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
+        <h4 className="font-medium text-primary-900 mb-2">ข้อมูลส่วนบุคคล</h4>
+        <p className="text-sm text-primary-800">
           ข้อมูลของคุณจะถูกใช้เพื่อการจองโต๊ะและติดต่อกลับเท่านั้น 
           เราจะไม่เปิดเผยข้อมูลให้บุคคลที่สามโดยไม่ได้รับอนุญาต
         </p>

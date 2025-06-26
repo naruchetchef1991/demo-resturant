@@ -39,7 +39,7 @@ const GuestCountSelection = () => {
               onClick={() => setGuestCount(option.value)}
               className={`p-4 text-center border-2 rounded-lg transition-all ${
                 guestCount === option.value
-                  ? 'border-blue-500 bg-blue-50 text-blue-700'
+                  ? 'border-primary-500 bg-primary-50 text-primary-700'
                   : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
               }`}
             >
@@ -61,7 +61,7 @@ const GuestCountSelection = () => {
               max="50"
               value={guestCount}
               onChange={(e) => setGuestCount(parseInt(e.target.value) || 1)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="จำนวนผู้ใช้บริการ"
             />
             <span className="text-gray-600">ท่าน</span>
@@ -72,7 +72,7 @@ const GuestCountSelection = () => {
       {/* Selected Summary */}
       <div className="mt-6 p-4 bg-gray-50 rounded-lg">
         <p className="text-center text-gray-700">
-          คุณเลือก <span className="font-semibold text-blue-600">{guestCount} ท่าน</span>
+          คุณเลือก <span className="font-semibold text-primary-600">{guestCount} ท่าน</span>
         </p>
       </div>
 

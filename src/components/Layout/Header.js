@@ -5,7 +5,7 @@ import { useLiffContext } from '../../context/LiffContext';
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { liffUser, logout, isInClient } = useLiffContext();
+  const { liffUser } = useLiffContext();
 
   const getPageTitle = () => {
     switch (location.pathname) {
@@ -25,6 +25,12 @@ const Header = () => {
         return 'จองสำเร็จ';
       case '/history':
         return 'ประวัติการจอง';
+      case '/profile':
+        return 'โปรไฟล์';
+      case '/promotion':
+        return 'โปรโมชั่น';
+      case '/store':
+        return 'ร้านค้า';
       default:
         return 'จองโต๊ะ';
     }
@@ -50,17 +56,6 @@ const Header = () => {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    if (isInClient) {
-      // หากอยู่ใน LINE app จะปิดหน้าต่าง
-      window.close();
-    } else {
-      // หากอยู่ใน browser จะ reload หน้า
-      window.location.reload();
-    }
-  };
-
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-md mx-auto px-4 py-3">
@@ -82,7 +77,6 @@ const Header = () => {
           </div>
 
           <div className="flex items-center space-x-3">
-            {/* User Profile */}
             {liffUser && (
               <div className="flex items-center space-x-2">
                 {liffUser.pictureUrl && (
@@ -97,30 +91,6 @@ const Header = () => {
                 </span>
               </div>
             )}
-
-            {/* History Button */}
-            {location.pathname !== '/history' && (
-              <button
-                onClick={() => navigate('/history')}
-                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                title="ประวัติการจอง"
-              >
-                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </button>
-            )}
-
-            {/* Logout Button */}
-            <button
-              onClick={handleLogout}
-              className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-              title="ออกจากระบบ"
-            >
-              <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-            </button>
           </div>
         </div>
       </div>
