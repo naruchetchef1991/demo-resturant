@@ -139,11 +139,17 @@ const Store = () => {
           </h2>
           <div className="grid grid-cols-2 gap-3">
             {storeImages.map((image, index) => (
-              <div key={index} className="relative group">
-                <div className={`w-full aspect-video bg-gradient-to-br ${image.gradient} rounded-lg flex flex-col items-center justify-center text-white shadow-lg overflow-hidden`}>
-                  <Icon name={image.icon} className="w-12 h-12 mb-2" />
-                  <h3 className="text-sm font-medium text-center px-2">{image.title}</h3>
+              <div key={index} className="relative group cursor-pointer">
+                <div className={`w-full aspect-video bg-gradient-to-br ${image.gradient} rounded-lg flex flex-col items-center justify-center text-white shadow-lg overflow-hidden
+                                transition-all duration-300 ease-in-out
+                                hover:shadow-xl hover:scale-105 hover:-translate-y-2
+                                active:scale-95 active:shadow-md`}>
+                  <Icon name={image.icon} className="w-12 h-12 mb-2 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" />
+                  <h3 className="text-sm font-medium text-center px-2 transition-all duration-300 group-hover:text-yellow-200">
+                    {image.title}
+                  </h3>
                 </div>
+                <div className="absolute inset-0 bg-white bg-opacity-0 hover:bg-opacity-10 rounded-lg transition-all duration-300"></div>
               </div>
             ))}
           </div>
@@ -223,9 +229,21 @@ const Store = () => {
           </h2>
           <div className="space-y-3">
             {awards.map((award, index) => (
-              <div key={index} className="flex items-center space-x-3 p-3 bg-yellow-50 rounded-lg">
-                <Icon name={award.icon} className="w-6 h-6 text-yellow-600" />
-                <span className="text-yellow-800 font-medium">{award.text}</span>
+              <div 
+                key={index} 
+                className="flex items-center space-x-3 p-3 bg-yellow-50 rounded-lg transition-all duration-300 ease-in-out
+                          hover:bg-yellow-100 hover:shadow-md hover:scale-105 hover:-translate-y-1
+                          active:scale-95 active:shadow-sm
+                          cursor-pointer group"
+              >
+                <div className="bg-yellow-200 p-2 rounded-full transition-all duration-300 ease-in-out
+                               group-hover:bg-yellow-300 group-hover:scale-110 group-hover:shadow-md
+                               group-active:scale-95">
+                  <Icon name={award.icon} className="w-6 h-6 text-yellow-600 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12" />
+                </div>
+                <span className="text-yellow-800 font-medium transition-colors duration-300 group-hover:text-yellow-900">
+                  {award.text}
+                </span>
               </div>
             ))}
           </div>
@@ -238,36 +256,64 @@ const Store = () => {
             ติดต่อเรา
           </h2>
           <div className="space-y-4">
-            <div className="flex items-start space-x-3">
-              <Icon name="location" className="w-6 h-6 text-gray-600 mt-1" />
-              <div>
-                <h3 className="font-medium text-gray-900">ที่อยู่</h3>
-                <p className="text-gray-600">123 ถนนสุขุมวิท แขวงวัฒนา เขตวัฒนา กรุงเทพมหานคร 10110</p>
+            <div className="flex items-start space-x-3 p-3 rounded-lg transition-all duration-300 ease-in-out
+                           hover:bg-gray-50 hover:shadow-md hover:scale-105 hover:-translate-y-1
+                           active:scale-95 active:shadow-sm
+                           cursor-pointer group">
+              <div className="bg-gray-100 p-2 rounded-full transition-all duration-300 ease-in-out
+                             group-hover:bg-primary-100 group-hover:scale-110 group-hover:shadow-md
+                             group-active:scale-95">
+                <Icon name="location" className="w-6 h-6 text-gray-600 transition-colors duration-300 group-hover:text-primary-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-medium text-gray-900 transition-colors duration-300 group-hover:text-primary-700">ที่อยู่</h3>
+                <p className="text-gray-600 transition-colors duration-300 group-hover:text-primary-600">123 ถนนสุขุมวิท แขวงวัฒนา เขตวัฒนา กรุงเทพมหานคร 10110</p>
               </div>
             </div>
             
-            <div className="flex items-start space-x-3">
-              <Icon name="phone" className="w-6 h-6 text-gray-600 mt-1" />
-              <div>
-                <h3 className="font-medium text-gray-900">เบอร์โทรศัพท์</h3>
-                <p className="text-gray-600">02-123-4567, 089-123-4567</p>
+            <div className="flex items-start space-x-3 p-3 rounded-lg transition-all duration-300 ease-in-out
+                           hover:bg-gray-50 hover:shadow-md hover:scale-105 hover:-translate-y-1
+                           active:scale-95 active:shadow-sm
+                           cursor-pointer group">
+              <div className="bg-gray-100 p-2 rounded-full transition-all duration-300 ease-in-out
+                             group-hover:bg-primary-100 group-hover:scale-110 group-hover:shadow-md
+                             group-active:scale-95">
+                <Icon name="phone" className="w-6 h-6 text-gray-600 transition-colors duration-300 group-hover:text-primary-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-medium text-gray-900 transition-colors duration-300 group-hover:text-primary-700">เบอร์โทรศัพท์</h3>
+                <p className="text-gray-600 transition-colors duration-300 group-hover:text-primary-600">02-123-4567, 089-123-4567</p>
               </div>
             </div>
             
-            <div className="flex items-start space-x-3">
-              <Icon name="email" className="w-6 h-6 text-gray-600 mt-1" />
-              <div>
-                <h3 className="font-medium text-gray-900">อีเมล</h3>
-                <p className="text-gray-600">info@phicharestaurant.com</p>
+            <div className="flex items-start space-x-3 p-3 rounded-lg transition-all duration-300 ease-in-out
+                           hover:bg-gray-50 hover:shadow-md hover:scale-105 hover:-translate-y-1
+                           active:scale-95 active:shadow-sm
+                           cursor-pointer group">
+              <div className="bg-gray-100 p-2 rounded-full transition-all duration-300 ease-in-out
+                             group-hover:bg-primary-100 group-hover:scale-110 group-hover:shadow-md
+                             group-active:scale-95">
+                <Icon name="email" className="w-6 h-6 text-gray-600 transition-colors duration-300 group-hover:text-primary-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-medium text-gray-900 transition-colors duration-300 group-hover:text-primary-700">อีเมล</h3>
+                <p className="text-gray-600 transition-colors duration-300 group-hover:text-primary-600">info@phicharestaurant.com</p>
               </div>
             </div>
             
-            <div className="flex items-start space-x-3">
-              <Icon name="clock" className="w-6 h-6 text-gray-600 mt-1" />
-              <div>
-                <h3 className="font-medium text-gray-900">เวลาทำการ</h3>
-                <p className="text-gray-600">จันทร์ - อาทิตย์: 10:00 - 22:00 น.</p>
-                <p className="text-sm text-green-600">เปิดให้บริการทุกวัน</p>
+            <div className="flex items-start space-x-3 p-3 rounded-lg transition-all duration-300 ease-in-out
+                           hover:bg-gray-50 hover:shadow-md hover:scale-105 hover:-translate-y-1
+                           active:scale-95 active:shadow-sm
+                           cursor-pointer group">
+              <div className="bg-gray-100 p-2 rounded-full transition-all duration-300 ease-in-out
+                             group-hover:bg-green-100 group-hover:scale-110 group-hover:shadow-md
+                             group-active:scale-95">
+                <Icon name="clock" className="w-6 h-6 text-gray-600 transition-colors duration-300 group-hover:text-green-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-medium text-gray-900 transition-colors duration-300 group-hover:text-green-700">เวลาทำการ</h3>
+                <p className="text-gray-600 transition-colors duration-300 group-hover:text-green-600">จันทร์ - อาทิตย์: 10:00 - 22:00 น.</p>
+                <p className="text-sm text-green-600 transition-colors duration-300 group-hover:text-green-700">เปิดให้บริการทุกวัน</p>
               </div>
             </div>
           </div>
@@ -280,17 +326,29 @@ const Store = () => {
             ติดตามเรา
           </h2>
           <div className="grid grid-cols-3 gap-3">
-            <button className="bg-primary-50 text-primary-600 p-4 rounded-lg text-center hover:bg-primary-100 transition-colors">
-              <Icon name="facebook" className="w-8 h-8 mx-auto mb-2" />
-              <div className="text-sm font-medium">Facebook</div>
+            <button className="bg-primary-50 text-primary-600 p-4 rounded-lg text-center transition-all duration-300 ease-in-out
+                              hover:bg-primary-100 hover:shadow-lg hover:scale-105 hover:-translate-y-1
+                              active:scale-95 active:shadow-md
+                              focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50
+                              group">
+              <Icon name="facebook" className="w-8 h-8 mx-auto mb-2 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" />
+              <div className="text-sm font-medium transition-colors duration-300 group-hover:text-primary-700">Facebook</div>
             </button>
-            <button className="bg-primary-50 text-primary-600 p-4 rounded-lg text-center hover:bg-primary-100 transition-colors">
-              <Icon name="instagram" className="w-8 h-8 mx-auto mb-2" />
-              <div className="text-sm font-medium">Instagram</div>
+            <button className="bg-primary-50 text-primary-600 p-4 rounded-lg text-center transition-all duration-300 ease-in-out
+                              hover:bg-primary-100 hover:shadow-lg hover:scale-105 hover:-translate-y-1
+                              active:scale-95 active:shadow-md
+                              focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50
+                              group">
+              <Icon name="instagram" className="w-8 h-8 mx-auto mb-2 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" />
+              <div className="text-sm font-medium transition-colors duration-300 group-hover:text-primary-700">Instagram</div>
             </button>
-            <button className="bg-primary-50 text-primary-600 p-4 rounded-lg text-center hover:bg-primary-100 transition-colors">
-              <Icon name="line" className="w-8 h-8 mx-auto mb-2" />
-              <div className="text-sm font-medium">LINE</div>
+            <button className="bg-primary-50 text-primary-600 p-4 rounded-lg text-center transition-all duration-300 ease-in-out
+                              hover:bg-primary-100 hover:shadow-lg hover:scale-105 hover:-translate-y-1
+                              active:scale-95 active:shadow-md
+                              focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50
+                              group">
+              <Icon name="line" className="w-8 h-8 mx-auto mb-2 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" />
+              <div className="text-sm font-medium transition-colors duration-300 group-hover:text-primary-700">LINE</div>
             </button>
           </div>
         </div>
