@@ -157,13 +157,27 @@ const Store = () => {
           </h2>
           <div className="grid grid-cols-2 gap-3">
             {menuCategories.map((category, index) => (
-              <div key={index} className="bg-gray-50 rounded-lg p-4 text-center">
-                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full ${category.color} mb-2`}>
-                  <Icon name={category.icon} className="w-6 h-6" />
+              <button 
+                key={index} 
+                className="bg-gray-50 rounded-lg p-4 text-center transition-all duration-300 ease-in-out
+                          hover:bg-white hover:shadow-lg hover:scale-105 hover:-translate-y-1
+                          active:scale-95 active:shadow-md
+                          focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50
+                          group cursor-pointer"
+              >
+                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full ${category.color} mb-2
+                               transition-all duration-300 ease-in-out
+                               group-hover:scale-110 group-hover:shadow-md
+                               group-active:scale-95`}>
+                  <Icon name={category.icon} className="w-6 h-6 transition-transform duration-300 group-hover:scale-110" />
                 </div>
-                <h3 className="font-semibold text-gray-900">{category.name}</h3>
-                <p className="text-sm text-gray-600">{category.count}</p>
-              </div>
+                <h3 className="font-semibold text-gray-900 transition-colors duration-300 group-hover:text-primary-700">
+                  {category.name}
+                </h3>
+                <p className="text-sm text-gray-600 transition-colors duration-300 group-hover:text-primary-600">
+                  {category.count}
+                </p>
+              </button>
             ))}
           </div>
         </div>
