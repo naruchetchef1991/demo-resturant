@@ -190,11 +190,25 @@ const Store = () => {
           </h2>
           <div className="grid grid-cols-2 gap-4">
             {features.map((feature, index) => (
-              <div key={index} className="flex items-start space-x-3">
-                <Icon name={feature.icon} className="w-6 h-6 text-primary-600 mt-1" />
-                <div>
-                  <h3 className="font-medium text-gray-900">{feature.title}</h3>
-                  <p className="text-sm text-gray-600">{feature.description}</p>
+              <div 
+                key={index} 
+                className="flex items-start space-x-3 p-3 rounded-lg transition-all duration-300 ease-in-out
+                          hover:bg-primary-50 hover:shadow-md hover:scale-105 hover:-translate-y-1
+                          active:scale-95 active:shadow-sm
+                          cursor-pointer group"
+              >
+                <div className="bg-primary-100 p-2 rounded-full transition-all duration-300 ease-in-out
+                               group-hover:bg-primary-200 group-hover:scale-110 group-hover:shadow-md
+                               group-active:scale-95">
+                  <Icon name={feature.icon} className="w-6 h-6 text-primary-600 transition-transform duration-300 group-hover:scale-110" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-medium text-gray-900 transition-colors duration-300 group-hover:text-primary-700">
+                    {feature.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 transition-colors duration-300 group-hover:text-primary-600">
+                    {feature.description}
+                  </p>
                 </div>
               </div>
             ))}
