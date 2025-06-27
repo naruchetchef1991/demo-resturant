@@ -8,7 +8,7 @@ const BottomNavigation = () => {
   const navigationItems = [
     {
       id: 'store',
-      label: 'ร้านค้า',
+      label: 'หน้าแรก',
       path: '/store',
       icon: (isActive) => (
         <svg 

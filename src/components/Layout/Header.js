@@ -30,7 +30,7 @@ const Header = () => {
       case '/promotion':
         return 'โปรโมชั่น';
       case '/store':
-        return 'ร้านค้า';
+        return 'หน้าแรก';
       default:
         return 'จองโต๊ะ';
     }
